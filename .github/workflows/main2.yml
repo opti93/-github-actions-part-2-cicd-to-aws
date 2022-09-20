@@ -1,0 +1,34 @@
+# This is a basic workflow to help you get started with Actions
+
+name: ci-cd
+env:
+  EB_PACKAGE_S3_BUCKET_NAME : "elb.bucket.opti"
+  EB_APPLICATION_NAME       : "Myflask"
+  EB_ENVIRONMENT_NAME       : "Myflask-env"
+  DEPLOY_PACKAGE_NAME       : "flask_app_${{ github.sha }}.zip"
+  AWS_REGION_NAME           : "eu-central-1"
+  
+
+on:
+
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  ci-part:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Coping repo
+        uses: actions/checkout@v3
+
+      - name: Create ZIP deployment package
+        run: zip -r ${{ env.DEPLOY_PACKAGE_NAME }} ./ -x *.git*
+      
+
+
