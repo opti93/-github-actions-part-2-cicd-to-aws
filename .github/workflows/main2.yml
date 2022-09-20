@@ -3,10 +3,10 @@
 name: ci-cd
 env:
   EB_PACKAGE_S3_BUCKET_NAME : "elb.bucket.opti"
-  EB_APPLICATION_NAME       : "Myflask"
-  EB_ENVIRONMENT_NAME       : "Myflask-env"
   DEPLOY_PACKAGE_NAME       : "flask_app_${{ github.sha }}.zip"
   AWS_REGION_NAME           : "eu-central-1"
+  EB_APPLICATION_NAME       : "Myflask"
+  EB_ENVIRONMENT_NAME       : "Myflask-env"
   
 
 on:
@@ -30,8 +30,32 @@ jobs:
       - name: Create ZIP deployment package
         run: zip -r ${{ env.DEPLOY_PACKAGE_NAME }} ./ -x *.git*
       
-      - name: Create ZIP deployment package
-        run: ls -la
+      - name: Configure my AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id    :  ${{ secrets.MY_AWS_ACCESS_KEY }}
+          aws-secret-access-key:  ${{ secrets.MY_AWS_SECRET_KEY }}
+          aws-region           :  ${{ env.AWS_REGION_NAME }}
+        
+      - name: Copy Deployment package to S3 bucket
+        run : aws s3 cp ${{ env.DEPLOY_PACKAGE_NAME }}  s3://${{ env.EB_PACKAGE_S3_BUCKET_NAME }}/
+        
+      
+  cd-part:
+    runs-on: ubuntu-latest
+    needs: [ci-part]
+    
+    steps:
+     - name: Configure my AWS Credentials
+       uses: aws-actions/configure-aws-credentials@v1
+       with:
+        aws-access-key-id    :  ${{ secrets.MY_AWS_ACCESS_KEY }}
+        aws-secret-access-key:  ${{ secrets.MY_AWS_SECRET_KEY }}
+        aws-region           :  ${{ env.AWS_REGION_NAME }}
+
+        
+        
+        
       
 
 
