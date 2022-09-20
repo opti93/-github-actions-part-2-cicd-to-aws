@@ -5,7 +5,7 @@ env:
   EB_PACKAGE_S3_BUCKET_NAME : "elb.bucket.opti"
   DEPLOY_PACKAGE_NAME       : "flask_app_${{ github.sha }}.zip"
   AWS_REGION_NAME           : "eu-central-1"
-  EB_APPLICATION_NAME       : "Myflask"
+  EB_APPLICATION_NAME       : "my.flask"
   EB_ENVIRONMENT_NAME       : "Myflask-env"
   
 
